@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div style="padding:20px;border:1px solid #ccc">
+        <h3>HASH PASSWORD</h3>
+        <b>Password</b><br />
+        <input type="text" name="pwd" id="pwd" style="width:200px;padding:5px;border-radius:3px" />&nbsp;<input type="button" style="padding:3px" value=" #hash# " onclick="bcrypt.hashPassword();"/>
+    </div>
+    <div style="padding:20px;border:1px solid #ccc;margin-top:20px;" id="validateBox">
+        <h3>VALIDATE HASH</h3>
+        <b>Password</b><br />
+        <input type="text" name="vpwd" id="vpwd" style="width:200px;padding:5px;border-radius:3px" /><br />
+        <b>Password Hash</b><br />
+        <input type="text" name="vhash" id="vhash" style="width:400px;padding:5px;border-radius:3px" />&nbsp;<input type="button" style="padding:3px" value=" #validate hash# "  onclick="bcrypt.verifyPassword();"/>
+    </div>
+<script type="text/javascript">
+    bcrypt = {
+        baseUrl: "http://localhost:54390/api/",
+        de: function (el) { return document.getElementById(el); },
+        hashPassword: function () {            
+            var pwd = this.de("pwd").value;            
+            this.callServer(this.baseUrl + "hashpassword/" + pwd, function (data) {
+                bcrypt.de("vpwd").value = data.password;
+                bcrypt.de("vhash").value = data.passwordHash;
+                bcrypt.de("validateBox").style.backgroundColor = "#fff";
+            });
+        },
+        verifyPassword: function () {
+            var pwd = this.de("vpwd").value;
+            var hash = this.de("vhash").value;
+
+            this.callServer(this.baseUrl + "validatehash/" + pwd + "/" + hash, function (data) {
+                if (data.isValid) 
+                    bcrypt.de("validateBox").style.backgroundColor = "#93ca3b";
+                else
+                    bcrypt.de("validateBox").style.backgroundColor = "#ff0030";
+            });
+        },
+        callServer: function (url, callback) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    callback(data);
+                });
+        }
+    }
+</script>
+</body>
+</html>
