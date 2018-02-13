@@ -25,6 +25,8 @@ namespace BCrypt.Controllers
             return new ClientResponse()
             {
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(pwd),
+                //autogenerating a salt of different size will take longer 
+                //PasswordHash = BCrypt.Net.BCrypt.HashPassword(pwd, BCrypt.Net.BCrypt.GenerateSalt(12)),
                 Password = pwd
             };
         }
